@@ -51,6 +51,7 @@ public class RequestController {
 
 	@PostMapping("/")
 	public Request addRequest(@RequestBody Request r) {
+		r.setStatus("New");
 		return requestRepo.save(r);
 	}
 

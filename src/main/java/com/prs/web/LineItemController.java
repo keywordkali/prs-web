@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.prs.business.LineItem;
+import com.prs.business.Request;
 import com.prs.db.LineItemRepo;
 import com.prs.db.RequestRepo;
 
@@ -47,7 +48,11 @@ public class LineItemController {
 
 	@PostMapping("/")
 	public LineItem addLineItem(@RequestBody LineItem l) {
-		return lineItemRepo.save(l);
+		l = lineItemRepo.save(l);
+		recalculateLineItemTotal(l.getRequest());
+		return l;
+		
+	
 	}
 
 	@PutMapping("/{id}")
@@ -59,6 +64,7 @@ public class LineItemController {
 		else {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, " ID does not match");
 		}
+		
 	}
 
 	@DeleteMapping("/{id}")
@@ -71,7 +77,27 @@ public class LineItemController {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "LineItem ID not found");
 		}
 		return l;
+		
 	}
-
-
+// method will recalculate the collectionValue and save it in the Request instance
+	
+	private void recalculateLineItemTotal(Request r) {
+		List<LineItem> lList = lineItemRepo.findAllByRequestId(r.getId());
+		double total = 0.0;
+		for (LineItem l : lList) {
+			// li total = product price * qty
+			total += l.getProduct().getPrice() * l.getQuantity();	
+		}
+	r.setTotal(total);
+	requestRepo.save(r);
+		
+	}
+	
+	
+	
+	
+	
+	
+	
+	
 }
