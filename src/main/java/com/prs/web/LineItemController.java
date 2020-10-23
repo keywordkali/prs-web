@@ -17,14 +17,17 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.prs.business.LineItem;
 import com.prs.db.LineItemRepo;
+import com.prs.db.RequestRepo;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/lineitems")
+@RequestMapping("/api/lineitems")
 
 public class LineItemController {
 	@Autowired
 	private LineItemRepo lineItemRepo;
+	@Autowired
+	private RequestRepo requestRepo;
 
 	@GetMapping("/")
 	public List<LineItem> getAllLineItems() {
@@ -47,19 +50,27 @@ public class LineItemController {
 		return lineItemRepo.save(l);
 	}
 
-	@PutMapping("/")
-	public LineItem updateLineItem(@RequestBody LineItem l) {
+	@PutMapping("/{id}")
+	public LineItem updateLineItem(@RequestBody LineItem l, @PathVariable int id) {
 		Optional<LineItem> lineItem = lineItemRepo.findById(l.getId());
-		if(!lineItem.isPresent()) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "LineItem not found!");
-		return lineItemRepo.save(l);
+		if(id==l.getId()) {
+			return lineItemRepo.save(l);	
+		}
+		else {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, " ID does not match");
+		}
 	}
 
 	@DeleteMapping("/{id}")
-	public LineItem deleteLineItem(@PathVariable Integer id) {
+	public Optional<LineItem> deleteLineItem(@PathVariable Integer id) {
 		Optional<LineItem>l=lineItemRepo.findById(id);
-		if(!l.isPresent()) return null;
-		lineItemRepo.deleteById(id);
-		return l.get();
+		if(l.isPresent()) {
+			lineItemRepo.deleteById(id);
+		}
+		else {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "LineItem ID not found");
+		}
+		return l;
 	}
 
 

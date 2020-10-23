@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.prs.business.LineItem;
+import com.prs.business.Request;
 import com.prs.business.Vendor;
 import com.prs.db.VendorRepo;
 
@@ -21,7 +23,7 @@ import java.util.Optional;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/vendors")
+@RequestMapping("/api/vendors")
 
 public class VendorController {
 	@Autowired
@@ -48,15 +50,27 @@ public class VendorController {
 	}
 
 
-	@PutMapping("/")
-	public Vendor updateVendor(@RequestBody Vendor v) {
-		return vendorRepo.save(v);
+	@PutMapping("/{id}")
+	public Vendor updateVendor(@RequestBody Vendor v, @PathVariable int id) {
+		Optional<Vendor> vendor = vendorRepo.findById(v.getId());
+		if(id==v.getId()) {
+			return vendorRepo.save(v);	
+		}
+		else {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, " ID does not match");
+		}
 	}
 
 
-	@DeleteMapping("/")
-	public Vendor deleteVendor(@RequestBody Vendor v) {
-		vendorRepo.delete(v);
+	@DeleteMapping("/{id}")
+	public Optional <Vendor> deleteVendor( @PathVariable int id) {
+		Optional<Vendor> v=vendorRepo.findById(id);
+		if(v.isPresent()) {
+			vendorRepo.deleteById(id);	
+		}
+		else {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Vendor ID not found");	
+		}
 		return v;
 	}
 

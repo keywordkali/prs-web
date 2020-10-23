@@ -20,7 +20,7 @@ import com.prs.db.ProductRepo;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/products")
+@RequestMapping("/api/products")
 
 public class ProductController {
 	@Autowired
@@ -47,19 +47,29 @@ public class ProductController {
 		return productRepo.save(p);
 	}
 
-	@PutMapping("/")
-	public Product updateProduct(@RequestBody Product p) {
+	@PutMapping("/{id}")
+	public Product updateProduct(@RequestBody Product p, @PathVariable int id) {
 		Optional<Product> product = productRepo.findById(p.getId());
-		if(!product.isPresent()) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found!");
-		return productRepo.save(p);
+		if(id==p.getId()) {
+			return productRepo.save(p);	
+		}
+		else {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, " ID does not match");
+		}
+
 	}
+	
 
 	@DeleteMapping("/{id}")
-	public Product deleteProduct(@PathVariable Integer id) {
+	public Optional<Product> deleteProduct(@PathVariable Integer id) {
 		Optional<Product>p=productRepo.findById(id);
-		if(!p.isPresent()) return null;
-		productRepo.deleteById(id);
-		return p.get();
+		if(p.isPresent()) {
+			productRepo.deleteById(id);	
+		}
+		else {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Product ID not found");	
+		}
+		return p;
 	}
 
 }
