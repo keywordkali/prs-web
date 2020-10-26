@@ -1,5 +1,8 @@
 package com.prs.business;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 import javax.persistence.*;
 
 @Entity
@@ -7,25 +10,27 @@ public class Request {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
-	private int userId;
+	@ManyToOne
+	@JoinColumn(name = "UserId")
+	private User user;
 	private String description;
 	private String justification;
-	private String dateNeeded;
+	private LocalDate dateNeeded;
 	private String deliveryMode;
 	private String status;
-	private Double total;
-	private String submittedDate;
+	private double total;
+	private LocalDateTime submittedDate;
 	private String reasonForRejection;
 
 	public Request() {
 		super();
 	}
 
-	public Request(int id, int userId, String description, String justification, String dateNeeded, String deliveryMode,
-			String status, Double total, String submittedDate, String reasonForRejection) {
+	public Request(int id, int userId, String description, String justification, LocalDate dateNeeded, String deliveryMode,
+			String status, Double total, LocalDateTime submittedDate, String reasonForRejection) {
 		super();
 		this.id = id;
-		this.userId = userId;
+		this.user = user;
 		this.description = description;
 		this.justification = justification;
 		this.dateNeeded = dateNeeded;
@@ -36,6 +41,7 @@ public class Request {
 		this.reasonForRejection = reasonForRejection;
 	}
 
+	
 	public int getId() {
 		return id;
 	}
@@ -44,12 +50,12 @@ public class Request {
 		this.id = id;
 	}
 
-	public int getUserId() {
-		return userId;
+	public User getUser() {
+		return user;
 	}
 
-	public void setUserId(int userId) {
-		this.userId = userId;
+	public void setUser(User user) {
+		this.user = user;
 	}
 
 	public String getDescription() {
@@ -68,11 +74,11 @@ public class Request {
 		this.justification = justification;
 	}
 
-	public String getDateNeeded() {
+	public LocalDate getDateNeeded() {
 		return dateNeeded;
 	}
 
-	public void setDateNeeded(String dateNeeded) {
+	public void setDateNeeded(LocalDate dateNeeded) {
 		this.dateNeeded = dateNeeded;
 	}
 
@@ -92,19 +98,19 @@ public class Request {
 		this.status = status;
 	}
 
-	public Double getTotal() {
+	public double getTotal() {
 		return total;
 	}
 
-	public void setTotal(Double total) {
+	public void setTotal(double total) {
 		this.total = total;
 	}
 
-	public String getSubmittedDate() {
+	public LocalDateTime getSubmittedDate() {
 		return submittedDate;
 	}
 
-	public void setSubmittedDate(String submittedDate) {
+	public void setSubmittedDate(LocalDateTime submittedDate) {
 		this.submittedDate = submittedDate;
 	}
 
@@ -118,7 +124,7 @@ public class Request {
 
 	@Override
 	public String toString() {
-		return "Request [id=" + id + ", userId=" + userId + ", description=" + description + ", justification="
+		return "Request [id=" + id + ", userId=" + user + ", description=" + description + ", justification="
 				+ justification + ", dateNeeded=" + dateNeeded + ", deliveryMode=" + deliveryMode + ", status=" + status
 				+ ", total=" + total + ", submitDate=" + submittedDate + ", reasonForRejection=" + reasonForRejection;
 
@@ -129,7 +135,7 @@ public class Request {
 		str += "-+-+-+-+-+-+-+-+-+-+-+-+-Request-+-+-+-+-+-+-+-+-+-+-+-+-+\n";
 		str += "-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+--+-+-\n";
 		str += "ID:\t\t\t " + id + "\n";
-		str += "User Id:\t\t " + userId + "\n";
+		str += "User Id:\t\t " + user + "\n";
 		str += "Justification:\t\t " + justification + "\n";
 		str += "Date Needed:\t\t " + dateNeeded + "\n";
 		str += "Delivery Mode: \t\t " + deliveryMode + "\n";

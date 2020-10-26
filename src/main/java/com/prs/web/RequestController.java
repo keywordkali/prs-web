@@ -1,5 +1,6 @@
 package com.prs.web;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -51,6 +52,7 @@ public class RequestController {
 
 	@PostMapping("/")
 	public Request addRequest(@RequestBody Request r) {
+		r.setSubmittedDate(LocalDateTime.now());
 		r.setStatus("New");
 		return requestRepo.save(r);
 	}
