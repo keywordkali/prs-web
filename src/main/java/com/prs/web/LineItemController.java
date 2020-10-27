@@ -24,7 +24,7 @@ import com.prs.db.RequestRepo;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/api/lineitems")
+@RequestMapping("/api/lines")
 
 public class LineItemController {
 	@Autowired
@@ -52,8 +52,8 @@ public class LineItemController {
 		return lineItemRepo.findAllByRequestId(id);
 	}
 
-	@PostMapping("/")
-	public LineItem addLineItem(@RequestBody LineItem l) {
+	@PostMapping("/{requestId}")
+	public LineItem addLineItem(@PathVariable int requestId, @RequestBody LineItem l) {
 		l = lineItemRepo.save(l);
 		recalculateLineItemTotal(l.getRequest());
 		return l;
@@ -76,10 +76,11 @@ public class LineItemController {
 	@DeleteMapping("/{id}")
 	public Optional<LineItem> deleteLineItem(@PathVariable Integer id) {
 		Optional<LineItem> l = lineItemRepo.findById(id);
-		recalculateLineItemTotal(l.get().getRequest());
+		
 
 		if (l.isPresent()) {
 			lineItemRepo.deleteById(id);
+			recalculateLineItemTotal(l.get().getRequest());
 		} else {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "LineItem ID not found");
 		}
